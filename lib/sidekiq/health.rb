@@ -1,4 +1,5 @@
 require 'sidekiq/health/railtie' if defined?(Rails::Railtie)
+require 'sidekiq/health/config'
 
 module Sidekiq
   module Health
@@ -10,6 +11,14 @@ module Sidekiq
       queue_status
       version
     }.each {|lib| require File.join(LIBRARY_PATH, lib) }
+
+    class << self
+      attr_reader :config
+  
+      def configure
+        @config = Sidekiq::Health::Config.new.tap { |h| yield(h) }
+      end
+    end
   end
 end
 
