@@ -76,6 +76,14 @@ module Sidekiq
         output
       end
 
+      def healthy?
+        warning = queue_names.any? do |name|
+          queue_size(name) > config.maximum_healthy_queue_size
+        end
+
+        !warning
+      end
+
       def statuses
         queue_names.map do |name|
           Status.new \
