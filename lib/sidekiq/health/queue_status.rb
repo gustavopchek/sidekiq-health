@@ -95,7 +95,7 @@ module Sidekiq
       end
 
       def queue_names
-        Sidekiq::Health::QueueNames.new.get
+        Sidekiq::Health::QueueNames.new(config.sidekiq_configuration_file_path).get
       end
 
       def dead_set_for(queue_name:)
