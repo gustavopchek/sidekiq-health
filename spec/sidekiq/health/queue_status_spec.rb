@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Sidekiq::Health::QueueStatus do
   before do
-    stub_const 'Sidekiq::Health::QueueNames', Class.new
+    allow(YAML).to receive(:load_file).and_return('')
   end
 
   def stub_queue_names(queue_names)
@@ -50,29 +50,29 @@ describe Sidekiq::Health::QueueStatus do
     end
 
     context 'with queue size larger than threshold' do
-      let(:queue_size) { 50 }
+      let(:queue_size) { 100 }
 
       context 'with one queue' do
         before do
           stub_queue_names(['default'])
-          stub_queue_size(['default', 50])
+          stub_queue_size(['default', 100])
         end
 
         it 'returns WARNING' do
           expect(subject).to eq \
-            "WARNING: TOO MANY JOBS ENQUEUED. Queue: \"default\" Size: 50"
+            "WARNING: TOO MANY JOBS ENQUEUED. Queue: \"default\" Size: 100"
         end
       end
 
       context 'with multiple queues' do
         before do
           stub_queue_names(['default', 'myqueue'])
-          stub_queue_size(['default', 50], ['myqueue', 100])
+          stub_queue_size(['default', 100], ['myqueue', 100])
         end
 
         it 'returns WARNING' do
           expect(subject).to eq \
-            "WARNING: TOO MANY JOBS ENQUEUED. Queue: \"default\" Size: 50\n" \
+            "WARNING: TOO MANY JOBS ENQUEUED. Queue: \"default\" Size: 100\n" \
             "WARNING: TOO MANY JOBS ENQUEUED. Queue: \"myqueue\" Size: 100" \
         end
       end

@@ -1,3 +1,5 @@
+require 'hashie'
+
 module Sidekiq
   module Health
     class Config < Hashie::Mash
