@@ -36,15 +36,15 @@ module Sidekiq
         def health_as_human_readable_string
           health = []
 
-          if total_number_of_jobs > config.maximum_healthy_queue_size
-            more_than_allowed = total_number_of_jobs - config.maximum_healthy_queue_size
+          if total_number_of_jobs > config.resolved_maximum_healthy_queue_size
+            more_than_allowed = total_number_of_jobs - config.resolved_maximum_healthy_queue_size
             health << "There are a total of #{total_number_of_jobs} scheduled jobs, "\
               "which is #{more_than_allowed} more than healthy."
           end
 
           dead_in_last_hour = total_number_of_failed_jobs_since(1.hour.ago)
-          if dead_in_last_hour > config.maximum_healthy_dead_set_last_hour_size
-            more_than_allowed = dead_in_last_hour - config.maximum_healthy_dead_set_last_hour_size
+          if dead_in_last_hour > config.resolved_maximum_healthy_dead_set_last_hour_size
+            more_than_allowed = dead_in_last_hour - config.resolved_maximum_healthy_dead_set_last_hour_size
             health << "There are a total of #{dead_in_last_hour} failed jobs, "\
               "which is #{more_than_allowed} more than healthy."
           end
@@ -78,7 +78,7 @@ module Sidekiq
 
       def healthy?
         warning = queue_names.any? do |name|
-          queue_size(name) > config.maximum_healthy_queue_size
+          queue_size(name) > config.resolved_maximum_healthy_queue_size
         end
 
         !warning
@@ -135,7 +135,7 @@ module Sidekiq
       end
 
       def healthy?
-        size < config.maximum_healthy_queue_size
+        size < config.resolved_maximum_healthy_queue_size
       end
 
       private
